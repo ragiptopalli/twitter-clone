@@ -16,7 +16,7 @@ import {
 const Sidebar = () => {
   return (
     <div className='hidden sm:flex flex-col p-2 xl:items-start fixed h-full xl:ml-24'>
-      <div className='hoverEffect p-0 hover:bg-blue-100 xl:px-1'>
+      <div className='hoverEffect p-0 hover:bg-blue-100 xl:px-1 flex items-center justify-center'>
         <Image
           src='https://help.twitter.com/content/dam/help-twitter/brand/logo.png'
           alt='twitter-logo'
@@ -41,6 +41,7 @@ const Sidebar = () => {
       </button>
 
       <div className='hoverEffect text-gray-700 flex items-center justify-center xl:justify-start mt-auto'>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className='rounded-full xl:mr-4'
           width='50'
