@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Sidebar from '../components/Sidebar/Sidebar';
 
 export default function Home() {
   return (
@@ -8,8 +9,9 @@ export default function Home() {
         <meta name='description' content='Twitter Clone using NextJs' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-
-      <h1>Hello, there</h1>
+      <main className='flex min-h-screen max-w-7xl mx-auto'>
+        <Sidebar />
+      </main>
     </div>
   );
 }
