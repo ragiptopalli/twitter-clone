@@ -47,7 +47,7 @@ const Sidebar = () => {
           width='50'
           height='50'
           src='https://avatars.githubusercontent.com/u/18445276?v=4'
-          alt=''
+          alt='user-img'
         />
         <div className='leading-5 hidden xl:inline'>
           <h4 className='font-bold'>Ragip Topalli</h4>

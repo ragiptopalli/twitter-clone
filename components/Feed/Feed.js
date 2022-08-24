@@ -1,4 +1,5 @@
 import { SparklesIcon } from '@heroicons/react/24/outline';
+import TweetInput from '../Input/TweetInput';
 
 const Feed = () => {
   return (
@@ -11,6 +12,7 @@ const Feed = () => {
           <SparklesIcon className='h-5' />
         </div>
       </div>
+      <TweetInput />
     </div>
   );
 };
