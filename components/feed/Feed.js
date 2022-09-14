@@ -1,6 +1,6 @@
 import { SparklesIcon } from '@heroicons/react/24/outline';
-import TweetInput from '../TweetInput/TweetInput';
-import TweetPost from '../TweetPost/TweetPost';
+import TweetInput from '../tweetInput/TweetInput';
+import TweetPost from '../tweetPost/TweetPost';
 
 const Feed = () => {
   const posts = [

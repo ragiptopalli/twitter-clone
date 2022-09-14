@@ -1,6 +1,7 @@
 import Head from 'next/head';
-import Feed from '../components/Feed/Feed';
-import Sidebar from '../components/Sidebar/Sidebar';
+import Feed from '../components/feed/Feed';
+import Sidebar from '../components/sidebar/Sidebar';
+import Widgets from '../components/widgets/Widgets';
 
 export default function Home() {
   return (
@@ -14,6 +15,8 @@ export default function Home() {
         <Sidebar />
 
         <Feed />
+
+        <Widgets />
       </main>
     </div>
   );

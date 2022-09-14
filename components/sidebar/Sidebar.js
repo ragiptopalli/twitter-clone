@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import SidebarMenuItem from '../SidebarMenu/SidebarMenuItem';
+import SidebarMenuItem from '../sidebarMenu/SidebarMenuItem';
 
 import { HomeIcon, HashtagIcon } from '@heroicons/react/20/solid';
 
