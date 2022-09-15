@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 const News = ({ article }) => {
   return (
     <a href={article.url} target='_blank' rel='noreferrer'>
@@ -11,6 +12,7 @@ const News = ({ article }) => {
         <img
           className='rounded-xl'
           width='70'
+          height='70'
           src={article.urlToImage}
           alt={article.title}
         />

@@ -7,6 +7,7 @@ const nextConfig = {
       'avatars.githubusercontent.com',
       'help.twitter.com',
       'images.unsplash.com',
+      'randomuser.me',
     ],
   },
 };
