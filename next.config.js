@@ -8,6 +8,7 @@ const nextConfig = {
       'help.twitter.com',
       'images.unsplash.com',
       'randomuser.me',
+      'cdn.cms-twdigitalassets.com',
     ],
   },
 };
