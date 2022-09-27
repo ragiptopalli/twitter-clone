@@ -12,7 +12,18 @@ export const authOptions = {
   ],
 
   pages: {
-    signIn: '/auth/signIn',
+    signIn: '/auth/signin',
+  },
+
+  callbacks: {
+    async session({ session, token }) {
+      session.user.username = session.user.name
+        .split(' ')
+        .join('')
+        .toLocaleLowerCase();
+      session.user.uuid = token.sub;
+      return session;
+    },
   },
 };
 export default NextAuth(authOptions);
