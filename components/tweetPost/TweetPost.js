@@ -6,6 +6,7 @@ import {
   ShareIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
+import Moment from 'react-moment';
 
 const TweetPost = ({ post }) => {
   return (
@@ -13,31 +14,33 @@ const TweetPost = ({ post }) => {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className='w-11 h-11 rounded-full mr-4'
-        src={post.userImage}
-        alt={post.userName}
+        src={post.data().userImage}
+        alt={post.data().userName}
       />
       <div className=''>
         <div className='flex items-center justify-between'>
           <div className='flex space-x-1 items-center whitespace-nowrap'>
             <h4 className='font-bold text-[15px] sm:text-[16px] hover:underline'>
-              {post.name}
+              {post.data().name}
             </h4>
-            <span className='text-sm sm:text-[15px]'>@{post.username} - </span>
+            <span className='text-sm sm:text-[15px]'>
+              @{post.data().username} -{' '}
+            </span>
             <span className='text-sm sm:text-[15px] hover:underline'>
-              {post.timestamp}
+              <Moment fromNow>{post?.timestamp?.toDate()}</Moment>
             </span>
           </div>
           <EllipsisHorizontalIcon className='hoverEffect h-10 w-10 hover:bg-sky-100 hover:text-sky-500 p-1' />
         </div>
 
         <p className='text-gray-800 text-[15px] sm:text-[16px] mb-2'>
-          {post.tweetText}
+          {post.data().tweetText}
         </p>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className='rounded-2xl mr-2'
-          src={post.tweetImage}
-          alt={post.tweetText}
+          src={post.data().tweetImage}
+          alt={post.data().tweetText}
         />
         {/* Icons for posts */}
         <div className='flex justify-between text-gray-500 p-2'>

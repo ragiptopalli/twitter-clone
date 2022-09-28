@@ -34,8 +34,8 @@ const TweetInput = () => {
       name: session.user.name,
       username: session.user.username,
       email: session.user.email,
-      image: session.user.image,
-      text: input,
+      userImage: session.user.image,
+      tweetText: input,
       timestamp: serverTimestamp(),
     });
 
@@ -47,7 +47,7 @@ const TweetInput = () => {
           const downloadURL = await getDownloadURL(imageRef);
 
           await updateDoc(doc(db, 'posts', docRef.id), {
-            image: downloadURL,
+            tweetImage: downloadURL,
           });
         }
       );
@@ -81,12 +81,12 @@ const TweetInput = () => {
             width='60'
             height='60'
             src={session.user.image}
-            alt='user-img'
+            alt={session.user.name}
           />
           <div className='w-full divide-y divide-gray-200'>
             <div className=''>
               <textarea
-                className='w-full border-none focus:ring-0 text-lg placeholder-gray-700 tracking-wide min-h-[50px] text-gray-700'
+                className='w-full border-none focus:ring-0 text-lg focus:placeholder-gray-300 placeholder-gray-600 tracking-wide min-h-[50px] text-gray-700'
                 rows='2'
                 placeholder="What's happening?"
                 value={input}
