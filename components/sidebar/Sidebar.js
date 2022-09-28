@@ -57,6 +57,7 @@ const Sidebar = () => {
               className='rounded-full xl:mr-4'
               width='50'
               height='50'
+              referrerPolicy='no-referrer'
               src={session.user.image}
               alt='user-img'
             />

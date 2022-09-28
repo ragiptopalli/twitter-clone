@@ -80,6 +80,7 @@ const TweetInput = () => {
             className='rounded-full cursor-pointer hover:brightness-95 h-12 w-12'
             width='60'
             height='60'
+            referrerPolicy='no-referrer'
             src={session.user.image}
             alt={session.user.name}
           />
