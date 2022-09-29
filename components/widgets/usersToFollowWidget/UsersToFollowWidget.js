@@ -4,7 +4,7 @@ import React from 'react';
 const UserToFollowWidget = ({ user }) => {
   const fullName = user.name.first + ' ' + user.name.last;
   return (
-    <div className='flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200'>
+    <div className='flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200 transition duration-500 ease-out'>
       <Image
         className='rounded-full'
         width='40'

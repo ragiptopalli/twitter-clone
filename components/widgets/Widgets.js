@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import News from './newsArticlesWidget/NewsArticlesWidget';
 import UserToFollowWidget from './usersToFollowWidget/UsersToFollowWidget';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const Widgets = ({ newsResults, userResults }) => {
   const [articleNum, setArticleNum] = useState(3);
@@ -23,9 +24,19 @@ const Widgets = ({ newsResults, userResults }) => {
 
       <div className='text-gray-700 space-y-3 bg-gray-100 rounded-xl pt-2 w-[90%] xl:w-[95%]'>
         <h4 className='font-bold text-xl px-4'>What&apos;s happening</h4>
-        {newsResults.slice(0, articleNum).map((article) => (
-          <News key={article.url} article={article} />
-        ))}
+        <AnimatePresence>
+          {newsResults.slice(0, articleNum).map((article) => (
+            <motion.div
+              key={article.url}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.5 }}
+            >
+              <News key={article.url} article={article} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
         <button
           onClick={() => setArticleNum(articleNum + 3)}
           className='text-blue-300 pl-4 pb-3 hover:text-blue-400'
@@ -35,12 +46,22 @@ const Widgets = ({ newsResults, userResults }) => {
       </div>
       <div className='sticky top-16 text-gray-700 space-y-3 bg-gray-100 rounded-xl pt-2 w-[90%] xl:w-[95%]'>
         <h4 className='font-bold text-xl px-4'>Who to Follow</h4>
-        {userResults.slice(0, usersNum).map((user) => (
-          <UserToFollowWidget
-            key={user.login.uuid}
-            user={user}
-          ></UserToFollowWidget>
-        ))}
+        <AnimatePresence>
+          {userResults.slice(0, usersNum).map((user) => (
+            <motion.div
+              key={user.login.uuid}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.5 }}
+            >
+              <UserToFollowWidget
+                key={user.login.uuid}
+                user={user}
+              ></UserToFollowWidget>
+            </motion.div>
+          ))}
+        </AnimatePresence>
         <button
           onClick={() => setUsersNum(usersNum + 3)}
           className='text-blue-300 pl-4 pb-3 hover:text-blue-400'
