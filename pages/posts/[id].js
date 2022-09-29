@@ -8,16 +8,34 @@ import Widgets from '../../components/widgets/Widgets';
 import { useRouter } from 'next/router';
 import TweetPost from '../../components/tweetPost/TweetPost';
 import { useEffect, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 import { db } from '../../firebase';
+import Reply from '../../components/reply/Reply';
 
 const PostPage = ({ newsResults, userResults }) => {
   const router = useRouter();
   const { id } = router.query;
   const [post, setPost] = useState(null);
+  const [replies, setReplies] = useState([]);
 
   useEffect(() => {
     return onSnapshot(doc(db, 'posts', id), (snapshot) => setPost(snapshot));
+  }, [db, id]);
+
+  useEffect(() => {
+    return onSnapshot(
+      query(
+        collection(db, 'posts', id, 'replies'),
+        orderBy('timestamp', 'desc')
+      ),
+      (snapshot) => setReplies(snapshot.docs)
+    );
   }, [db, id]);
 
   return (
@@ -45,6 +63,17 @@ const PostPage = ({ newsResults, userResults }) => {
             </h2>
           </div>
           <TweetPost id={id} post={post} />
+          {replies.length > 0 &&
+            replies.map((reply) => {
+              return (
+                <Reply
+                  key={reply.id}
+                  replyId={reply.id}
+                  originalPostId={id}
+                  reply={reply.data()}
+                />
+              );
+            })}
         </div>
 
         <Widgets

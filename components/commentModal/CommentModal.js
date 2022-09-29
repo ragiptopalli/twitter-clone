@@ -46,6 +46,7 @@ const CommentModal = () => {
       username: session.user.username,
       userImage: session.user.image,
       timestamp: serverTimestamp(),
+      userId: session.user.uuid,
     });
 
     setIsModalOpen(false);

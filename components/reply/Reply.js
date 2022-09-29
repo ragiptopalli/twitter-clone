@@ -27,11 +27,10 @@ import { postIdState } from '../../atmos/commentModalAtom';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 
-const TweetPost = ({ post, id }) => {
+const Reply = ({ reply, replyId, originalPostId }) => {
   const { data: session } = useSession();
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
-  const [replies, setReplies] = useState([]);
 
   const [modalOpen, setModalOpen] = useRecoilState(modalState);
   const [modalPostId, setModalPostId] = useRecoilState(postIdState);
@@ -39,16 +38,11 @@ const TweetPost = ({ post, id }) => {
   const router = useRouter();
 
   useEffect(() => {
-    return onSnapshot(collection(db, 'posts', id, 'likes'), (snapshot) =>
-      setLikes(snapshot.docs)
+    return onSnapshot(
+      collection(db, 'posts', originalPostId, 'replies', replyId, 'likes'),
+      (snapshot) => setLikes(snapshot.docs)
     );
-  }, [db]);
-
-  useEffect(() => {
-    return onSnapshot(collection(db, 'posts', id, 'replies'), (snapshot) =>
-      setReplies(snapshot.docs)
-    );
-  }, [db]);
+  }, [db, originalPostId]);
 
   useEffect(() => {
     setHasLiked(
@@ -56,36 +50,53 @@ const TweetPost = ({ post, id }) => {
     );
   }, [likes]);
 
-  const likePost = async () => {
+  const likeReply = async () => {
     if (session) {
       if (hasLiked) {
-        await deleteDoc(doc(db, 'posts', id, 'likes', session?.user.uuid));
+        await deleteDoc(
+          doc(
+            db,
+            'posts',
+            originalPostId,
+            'replies',
+            replyId,
+            'likes',
+            session?.user.uuid
+          )
+        );
       } else {
-        await setDoc(doc(db, 'posts', id, 'likes', session?.user.uuid), {
-          username: session.user.username,
-        });
+        await setDoc(
+          doc(
+            db,
+            'posts',
+            originalPostId,
+            'replies',
+            replyId,
+            'likes',
+            session?.user.uuid
+          ),
+          {
+            username: session?.user.username,
+          }
+        );
       }
     } else {
       signIn();
     }
   };
 
-  const deletePost = async () => {
-    if (window.confirm('Are you sure you want to delete this post!')) {
-      deleteDoc(doc(db, 'posts', id));
-      if (post.data().image) {
-        deleteObject(ref(storage, `posts/${id}/image`));
-      }
-      router.push('/');
+  const deleteReply = async () => {
+    if (window.confirm('Are you sure you want to delete this reply!')) {
+      deleteDoc(doc(db, 'posts', originalPostId, 'replies', replyId));
     }
   };
 
   return (
-    <div className='flex p-3 cursor-pointer border-b border-gray-200'>
+    <div className='flex p-3 cursor-pointer border-b border-gray-200 pl-20'>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className='w-11 h-11 rounded-full mr-4'
-        src={post?.data()?.userImage}
+        src={reply?.userImage}
         referrerPolicy='no-referrer'
         alt=''
       />
@@ -93,31 +104,22 @@ const TweetPost = ({ post, id }) => {
         <div className='flex items-center justify-between'>
           <div className='flex space-x-1 items-center whitespace-nowrap'>
             <h4 className='font-bold text-[15px] sm:text-[16px] hover:underline'>
-              {post?.data()?.name}
+              {reply?.name}
             </h4>
             <span className='text-sm sm:text-[15px]'>
-              @{post?.data()?.username} -{' '}
+              @{reply?.username} -{' '}
             </span>
             <span className='text-sm sm:text-[15px] hover:underline'>
-              <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
+              <Moment fromNow>{reply?.timestamp?.toDate()}</Moment>
             </span>
           </div>
           <EllipsisHorizontalIcon className='hoverEffect h-10 w-10 hover:bg-sky-100 hover:text-sky-500 p-1' />
         </div>
 
-        <p
-          onClick={() => router.push(`/posts/${id}`)}
-          className='text-gray-800 text-[15px] sm:text-[16px] mb-2'
-        >
-          {post?.data()?.tweetText}
+        <p className='text-gray-800 text-[15px] sm:text-[16px] mb-2'>
+          {reply?.comment}
         </p>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          onClick={() => router.push(`/posts/${id}`)}
-          className='rounded-2xl mr-2'
-          src={post?.data()?.tweetImage}
-          alt=''
-        />
+
         {/* Icons for posts */}
         <div className='flex justify-between text-gray-500 p-2'>
           <div className='flex items-center'>
@@ -126,32 +128,29 @@ const TweetPost = ({ post, id }) => {
                 if (!session) {
                   signIn();
                 } else {
-                  setModalPostId(id);
+                  setModalPostId(originalPostId);
                   setModalOpen(!modalOpen);
                 }
               }}
               className='h-9  w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100'
             />
-            {replies.length > 0 && (
-              <span className='text-sm select-none'>{replies.length}</span>
-            )}
           </div>
 
-          {session?.user.uuid === post?.data()?.id && (
+          {session?.user.uuid === reply?.userId && (
             <TrashIcon
-              onClick={deletePost}
+              onClick={deleteReply}
               className='h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100'
             />
           )}
           <div className='flex items-center'>
             {hasLiked ? (
               <HeartIconFilled
-                onClick={likePost}
+                onClick={likeReply}
                 className='h-9 w-9 hoverEffect p-2 text-red-600 hover:bg-red-100'
               />
             ) : (
               <HeartIcon
-                onClick={likePost}
+                onClick={likeReply}
                 className='h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100'
               />
             )}
@@ -171,4 +170,4 @@ const TweetPost = ({ post, id }) => {
   );
 };
 
-export default TweetPost;
+export default Reply;
