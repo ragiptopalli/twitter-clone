@@ -14,10 +14,11 @@ import {
   onSnapshot,
   setDoc,
 } from 'firebase/firestore';
+import { deleteObject, ref } from 'firebase/storage';
 import { signIn, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import Moment from 'react-moment';
-import { db } from '../../firebase';
+import { db, storage } from '../../firebase';
 
 const TweetPost = ({ post }) => {
   const { data: session } = useSession();
@@ -48,6 +49,15 @@ const TweetPost = ({ post }) => {
       }
     } else {
       signIn();
+    }
+  };
+
+  const deletePost = async () => {
+    if (window.confirm('Are you sure you want to delete this post!')) {
+      deleteDoc(doc(db, 'posts', post.id));
+      if (post.data().image) {
+        deleteObject(ref(storage, `posts/${post.id}/image`));
+      }
     }
   };
 
@@ -82,13 +92,18 @@ const TweetPost = ({ post }) => {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className='rounded-2xl mr-2'
-          src={post.data().tweetImage}
-          alt={post.data().tweetText}
+          src={post?.data()?.tweetImage}
+          alt=''
         />
         {/* Icons for posts */}
         <div className='flex justify-between text-gray-500 p-2'>
           <ChatBubbleOvalLeftIcon className='h-9  w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100' />
-          <TrashIcon className='h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100' />
+          {session?.user.uuid === post?.data().id && (
+            <TrashIcon
+              onClick={deletePost}
+              className='h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100'
+            />
+          )}
           <div className='flex items-center'>
             {hasLiked ? (
               <HeartIconFilled

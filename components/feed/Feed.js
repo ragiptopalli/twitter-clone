@@ -9,15 +9,12 @@ const Feed = () => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(collection(db, 'posts')),
-      orderBy('timestamp', 'desc'),
+    return onSnapshot(
+      query(collection(db, 'posts'), orderBy('timestamp', 'desc')),
       (snapshot) => {
         setPosts(snapshot.docs);
       }
     );
-
-    return unsubscribe;
   }, []);
 
   return (
