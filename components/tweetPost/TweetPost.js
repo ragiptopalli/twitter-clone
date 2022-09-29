@@ -7,6 +7,7 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconFilled } from '@heroicons/react/24/solid';
+
 import {
   collection,
   deleteDoc,
@@ -15,15 +16,21 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
+import { db, storage } from '../../firebase';
+
 import { signIn, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import Moment from 'react-moment';
-import { db, storage } from '../../firebase';
+
+import { modalState } from '../../atmos/commentModalAtom';
+import { useRecoilState } from 'recoil';
 
 const TweetPost = ({ post }) => {
   const { data: session } = useSession();
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
+
+  const [modalOpen, setModalOpen] = useRecoilState(modalState);
 
   useEffect(() => {
     const unsub = onSnapshot(
@@ -97,7 +104,10 @@ const TweetPost = ({ post }) => {
         />
         {/* Icons for posts */}
         <div className='flex justify-between text-gray-500 p-2'>
-          <ChatBubbleOvalLeftIcon className='h-9  w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100' />
+          <ChatBubbleOvalLeftIcon
+            onClick={() => setModalOpen(!modalOpen)}
+            className='h-9  w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100'
+          />
           {session?.user.uuid === post?.data().id && (
             <TrashIcon
               onClick={deletePost}
