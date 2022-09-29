@@ -8,28 +8,49 @@ import {
 } from '@heroicons/react/24/outline';
 import { db } from '../../firebase';
 import { useEffect, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+} from 'firebase/firestore';
 import Image from 'next/image';
 import Moment from 'react-moment';
 
 import { useSession } from 'next-auth/react';
+
+import { useRouter } from 'next/router';
 
 const CommentModal = () => {
   const [isModalOpen, setIsModalOpen] = useRecoilState(modalState);
   const [modalPostId] = useRecoilState(postIdState);
   const [post, setPost] = useState([]);
   const [input, setInput] = useState('');
+
   const { data: session } = useSession();
+
+  const router = useRouter();
 
   useEffect(() => {
     return onSnapshot(doc(db, 'posts', modalPostId), (snapshot) => {
       setPost(snapshot);
       console.log(snapshot);
     });
-  }, [modalPostId, db]);
+  }, [modalPostId]);
 
   const sendComment = async () => {
-    return 'hey';
+    await addDoc(collection(db, 'posts', modalPostId, 'replies'), {
+      comment: input,
+      name: session.user.name,
+      username: session.user.username,
+      userImage: session.user.image,
+      timestamp: serverTimestamp(),
+    });
+
+    setIsModalOpen(false);
+    setInput('');
+    router.push(`/posts/${modalPostId}`);
   };
 
   return (

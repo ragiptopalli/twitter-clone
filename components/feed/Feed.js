@@ -38,7 +38,7 @@ const Feed = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 1.5 }}
           >
-            <TweetPost key={post.id} post={post} />
+            <TweetPost key={post.id} id={post.id} post={post} />
           </motion.div>
         ))}
       </AnimatePresence>

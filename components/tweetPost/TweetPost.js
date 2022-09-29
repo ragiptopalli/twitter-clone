@@ -25,19 +25,28 @@ import Moment from 'react-moment';
 import { modalState } from '../../atmos/commentModalAtom';
 import { postIdState } from '../../atmos/commentModalAtom';
 import { useRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 
-const TweetPost = ({ post }) => {
+const TweetPost = ({ post, id }) => {
   const { data: session } = useSession();
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
+  const [replies, setReplies] = useState([]);
 
   const [modalOpen, setModalOpen] = useRecoilState(modalState);
   const [modalPostId, setModalPostId] = useRecoilState(postIdState);
 
+  const router = useRouter();
+
   useEffect(() => {
-    const unsub = onSnapshot(
-      collection(db, 'posts', post.id, 'likes'),
-      (snapshot) => setLikes(snapshot.docs)
+    return onSnapshot(collection(db, 'posts', id, 'likes'), (snapshot) =>
+      setLikes(snapshot.docs)
+    );
+  }, [db]);
+
+  useEffect(() => {
+    return onSnapshot(collection(db, 'posts', id, 'replies'), (snapshot) =>
+      setReplies(snapshot.docs)
     );
   }, [db]);
 
@@ -50,9 +59,9 @@ const TweetPost = ({ post }) => {
   const likePost = async () => {
     if (session) {
       if (hasLiked) {
-        await deleteDoc(doc(db, 'posts', post.id, 'likes', session?.user.uuid));
+        await deleteDoc(doc(db, 'posts', id, 'likes', session?.user.uuid));
       } else {
-        await setDoc(doc(db, 'posts', post.id, 'likes', session?.user.uuid), {
+        await setDoc(doc(db, 'posts', id, 'likes', session?.user.uuid), {
           username: session.user.username,
         });
       }
@@ -63,10 +72,11 @@ const TweetPost = ({ post }) => {
 
   const deletePost = async () => {
     if (window.confirm('Are you sure you want to delete this post!')) {
-      deleteDoc(doc(db, 'posts', post.id));
+      deleteDoc(doc(db, 'posts', id));
       if (post.data().image) {
-        deleteObject(ref(storage, `posts/${post.id}/image`));
+        deleteObject(ref(storage, `posts/${id}/image`));
       }
+      router.push('/');
     }
   };
 
@@ -79,24 +89,24 @@ const TweetPost = ({ post }) => {
         referrerPolicy='no-referrer'
         alt=''
       />
-      <div className=''>
+      <div className='flex-1'>
         <div className='flex items-center justify-between'>
           <div className='flex space-x-1 items-center whitespace-nowrap'>
             <h4 className='font-bold text-[15px] sm:text-[16px] hover:underline'>
-              {post.data().name}
+              {post?.data()?.name}
             </h4>
             <span className='text-sm sm:text-[15px]'>
-              @{post.data().username} -{' '}
+              @{post?.data()?.username} -{' '}
             </span>
             <span className='text-sm sm:text-[15px] hover:underline'>
-              <Moment fromNow>{post?.data().timestamp?.toDate()}</Moment>
+              <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
             </span>
           </div>
           <EllipsisHorizontalIcon className='hoverEffect h-10 w-10 hover:bg-sky-100 hover:text-sky-500 p-1' />
         </div>
 
         <p className='text-gray-800 text-[15px] sm:text-[16px] mb-2'>
-          {post.data().tweetText}
+          {post?.data()?.tweetText}
         </p>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -106,18 +116,24 @@ const TweetPost = ({ post }) => {
         />
         {/* Icons for posts */}
         <div className='flex justify-between text-gray-500 p-2'>
-          <ChatBubbleOvalLeftIcon
-            onClick={() => {
-              if (!session) {
-                signIn();
-              } else {
-                setModalPostId(post?.id);
-                setModalOpen(!modalOpen);
-              }
-            }}
-            className='h-9  w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100'
-          />
-          {session?.user.uuid === post?.data().id && (
+          <div className='flex items-center'>
+            <ChatBubbleOvalLeftIcon
+              onClick={() => {
+                if (!session) {
+                  signIn();
+                } else {
+                  setModalPostId(id);
+                  setModalOpen(!modalOpen);
+                }
+              }}
+              className='h-9  w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100'
+            />
+            {replies.length > 0 && (
+              <span className='text-sm select-none'>{replies.length}</span>
+            )}
+          </div>
+
+          {session?.user.uuid === post?.data()?.id && (
             <TrashIcon
               onClick={deletePost}
               className='h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100'
