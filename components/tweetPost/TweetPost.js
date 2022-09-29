@@ -23,6 +23,7 @@ import { useEffect, useState } from 'react';
 import Moment from 'react-moment';
 
 import { modalState } from '../../atmos/commentModalAtom';
+import { postIdState } from '../../atmos/commentModalAtom';
 import { useRecoilState } from 'recoil';
 
 const TweetPost = ({ post }) => {
@@ -31,6 +32,7 @@ const TweetPost = ({ post }) => {
   const [hasLiked, setHasLiked] = useState(false);
 
   const [modalOpen, setModalOpen] = useRecoilState(modalState);
+  const [modalPostId, setModalPostId] = useRecoilState(postIdState);
 
   useEffect(() => {
     const unsub = onSnapshot(
@@ -73,9 +75,9 @@ const TweetPost = ({ post }) => {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className='w-11 h-11 rounded-full mr-4'
-        src={post.data().userImage}
+        src={post?.data()?.userImage}
         referrerPolicy='no-referrer'
-        alt={post.data().userName}
+        alt=''
       />
       <div className=''>
         <div className='flex items-center justify-between'>
@@ -105,7 +107,14 @@ const TweetPost = ({ post }) => {
         {/* Icons for posts */}
         <div className='flex justify-between text-gray-500 p-2'>
           <ChatBubbleOvalLeftIcon
-            onClick={() => setModalOpen(!modalOpen)}
+            onClick={() => {
+              if (!session) {
+                signIn();
+              } else {
+                setModalPostId(post?.id);
+                setModalOpen(!modalOpen);
+              }
+            }}
             className='h-9  w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100'
           />
           {session?.user.uuid === post?.data().id && (

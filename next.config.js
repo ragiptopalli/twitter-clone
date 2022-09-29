@@ -9,6 +9,7 @@ const nextConfig = {
       'images.unsplash.com',
       'randomuser.me',
       'cdn.cms-twdigitalassets.com',
+      'lh3.googleusercontent.com',
     ],
   },
 };
